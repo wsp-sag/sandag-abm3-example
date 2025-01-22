@@ -64,3 +64,4 @@ ABM3 calibration ASC ptype=5,ptype==5,0.0,0.114,-0.227
 ABM3 calibration ASC ptype=6,ptype==6,3.650,-0.241,0.298
 ABM3 calibration ASC ptype=7,ptype==7,2.000,-0.171,0.096
 ABM3 calibration ASC ptype=8,ptype==8,0.436,0.454,-0.731
+Mandatory pattern unavailable if worker is telecommuting on simulation day,is_telecommuting,coef_UNAVAILABLE,,
