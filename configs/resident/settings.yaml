@@ -29,8 +29,8 @@ want_dest_choice_sample_tables: False
 # trace origin, destination in accessibility calculation; comment out or leave empty for no trace
 #trace_od:
 
-households_sample_size: 63844 #255377
-# resume_after: cdap_simulate
+households_sample_size: 63844
+
 # input tables
 input_table_list:
   - tablename: households
