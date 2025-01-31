@@ -31,4 +31,3 @@ util_military,Miliary industry,@df.naics_code==9000,,coef_military_1day,coef_mil
 util_retail,Retail industry,"@df.naics_code.isin([44,45])",,coef_retail_1day,coef_retail_23day,coef_retail_23day,coef_retail_4day
 util_asc,Alternative specific constant,1,,asc_1day,asc_23day,asc_23day,asc_4day
 util_split_2_3_days_constant, Constant for splitting 2_3_days telecommute frequency,@np.log(0.5),,,1,1,
-util_tele_constant, Constant for sensitivity test,1,-1.876356801,,,,
