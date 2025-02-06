@@ -29,12 +29,12 @@ want_dest_choice_sample_tables: False
 # trace origin, destination in accessibility calculation; comment out or leave empty for no trace
 #trace_od:
 
-households_sample_size: 63844
+households_sample_size: 100
 
 # input tables
 input_table_list:
   - tablename: households
-    filename: households.parquet
+    filename: households.csv
     index_col: household_id
     rename_columns:
       hhid: household_id
@@ -56,7 +56,7 @@ input_table_list:
       - bldgsz
       - unittype
   - tablename: persons
-    filename: persons.parquet
+    filename: persons.csv
     index_col: person_id
     rename_columns:
       hhid: household_id
@@ -74,7 +74,7 @@ input_table_list:
       - naics2_original_code
       - soc2
   - tablename: land_use
-    filename: land_use.parquet
+    filename: land_use.csv
     index_col: zone_id
     rename_columns:
       MAZ: zone_id
