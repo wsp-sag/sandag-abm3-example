@@ -58,6 +58,7 @@ EXPECTED_MODELS = [
     "transponder_ownership",
     "free_parking",
     "telecommute_frequency",
+    "telecommute_status",
     "cdap_simulate",
     "mandatory_tour_frequency",
     "mandatory_tour_scheduling",
