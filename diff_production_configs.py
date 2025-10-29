@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Script to compare configs from SANDAG/ABM release with configs from ActivitySim/sandag-abm3-example repo
 """
@@ -43,19 +44,28 @@ def run_command(cmd, cwd=None):
         sys.exit(1)
 
 
-def download_release(url, dest_dir):
-    """Download the release from GitHub"""
-    print(f"Downloading release from {url}...")
+def download_archive(url, dest_dir):
+    """Download the archive from GitHub (release or branch)"""
+    print(f"Downloading archive from {url}...")
     response = requests.get(url, stream=True)
     response.raise_for_status()
     
-    zip_path = dest_dir / "release.zip"
+    zip_path = dest_dir / "archive.zip"
     with open(zip_path, 'wb') as f:
         for chunk in response.iter_content(chunk_size=8192):
             f.write(chunk)
     
     print(f"Downloaded to {zip_path}")
     return zip_path
+
+
+def clone_source_repo(repo_url, dest_dir, branch):
+    """Clone the source repository at a specific branch"""
+    clone_cmd = f"git clone {repo_url} --branch {branch} source_repo"
+    
+    print(f"Cloning source repo {repo_url} (branch: {branch})...")
+    run_command(clone_cmd, cwd=dest_dir)
+    return dest_dir / "source_repo"
 
 
 def extract_configs(zip_path, extract_dir):
@@ -195,25 +205,25 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
             Examples:
-            %(prog)s                                   # Use latest release, default branch, summary mode, all configs
-            %(prog)s -r v15.3.1                        # Use specific release, summary mode, all configs
-            %(prog)s -r v15.3.1 -f                     # Use specific release, full diff output
-            %(prog)s -r v15.3.1 -d resident            # Diff only the resident subdirectory
-            %(prog)s -d commercial --full              # Diff commercial subdirectory with full output
-            %(prog)s -r v15.3.1 -b develop -d resident # Specific release, branch, and subdirectory
+            %(prog)s                                    # Use latest production release vs default example branch
+            %(prog)s -p v15.3.1                         # Use specific production release
+            %(prog)s -p develop                         # Use production develop branch
+            %(prog)s -p main -e develop                 # Compare production main vs example develop
+            %(prog)s -p v15.3.1 -e main -d resident     # Specific release vs example main, resident subdir only
+            %(prog)s -p develop -d resident -f          # Production develop branch, full diff output
         """
     )
     parser.add_argument(
-        '-r', '--release',
+        '-p', '--production',
         type=str,
         default=None,
-        help='Release tag/version to compare (e.g., v15.3.1). If not specified, uses the latest release.'
+        help='SANDAG/ABM reference to compare: release tag (e.g., v15.3.1) or branch name (e.g., develop, main). If not specified, uses the latest release.'
     )
     parser.add_argument(
-        '-b', '--branch',
+        '-e', '--example',
         type=str,
         default=None,
-        help='Branch of the comparison repo to diff against (e.g., main, develop). If not specified, uses the default branch.'
+        help='ActivitySim/sandag-abm3-example branch to diff against (e.g., main, develop). If not specified, uses the default branch.'
     )
     parser.add_argument(
         '-f', '--full',
@@ -232,37 +242,55 @@ def main():
     # Configuration
     REPO_OWNER = "SANDAG"
     REPO_NAME = "ABM"
+    SOURCE_REPO_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}.git"
     COMPARISON_REPO = "https://github.com/ActivitySim/sandag-abm3-example.git"
     
-    # Determine which release to use
-    if args.release:
-        release_tag = args.release
-        print(f"Using specified release: {release_tag}")
+    # Determine source: release or branch
+    # Check if it's a release tag (starts with 'v') or a branch name
+    if args.production:
+        source_ref = args.production
+        # Heuristic: if it starts with 'v' and contains numbers, likely a release tag
+        use_release = source_ref.startswith('v') and any(char.isdigit() for char in source_ref)
+        
+        if use_release:
+            print(f"Using production release: {source_ref}")
+        else:
+            print(f"Using production branch: {source_ref}")
     else:
+        # Default: fetch latest release
         print("Fetching latest release...")
-        release_tag = get_latest_release(REPO_OWNER, REPO_NAME)
-        if not release_tag:
-            print("Error: Could not fetch latest release. Please specify a release with -r")
+        source_ref = get_latest_release(REPO_OWNER, REPO_NAME)
+        if not source_ref:
+            print("Error: Could not fetch latest release. Please specify with -p/--production")
             sys.exit(1)
-        print(f"Using latest release: {release_tag}")
-    
-    # Construct release URL
-    RELEASE_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}/archive/refs/tags/{release_tag}.zip"
-    
+        print(f"Using latest release: {source_ref}")
+        use_release = True
     # Create temporary working directory
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
         print(f"Working directory: {temp_path}\n")
         
         try:
-            # Step 1: Download release
-            zip_path = download_release(RELEASE_URL, temp_path)
-            
-            # Step 2: Extract configs
-            configs_dir = extract_configs(zip_path, temp_path)
+            if use_release:
+                # Step 1: Download release
+                ARCHIVE_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}/archive/refs/tags/{source_ref}.zip"
+                zip_path = download_archive(ARCHIVE_URL, temp_path)
+                
+                # Step 2: Extract configs
+                configs_dir = extract_configs(zip_path, temp_path)
+            else:
+                # Step 1: Clone source repo at specific branch
+                source_repo = clone_source_repo(SOURCE_REPO_URL, temp_path, source_ref)
+                
+                # Step 2: Find configs directory
+                configs_dir = source_repo / "src" / "asim" / "configs"
+                if not configs_dir.exists():
+                    print(f"Error: Could not find configs at {configs_dir}")
+                    sys.exit(1)
+                print(f"Using configs from {configs_dir}")
             
             # Step 3: Clone comparison repo
-            comparison_repo = clone_comparison_repo(COMPARISON_REPO, temp_path, args.branch)
+            comparison_repo = clone_comparison_repo(COMPARISON_REPO, temp_path, args.example)
             
             # Step 4: Perform diff
             perform_diff(configs_dir, comparison_repo, summary_only=not args.full, subdir=args.subdir)
