@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
 """
-Script to compare configs from SANDAG/ABM release with configs from ActivitySim/sandag-abm3-example repo
+Script to compare configs from SANDAG/ABM release or branch with configs from ActivitySim/sandag-abm3-example repo
 """
 
 import os
@@ -45,7 +44,7 @@ def run_command(cmd, cwd=None):
 
 
 def download_archive(url, dest_dir):
-    """Download the archive from GitHub (release or branch)"""
+    """Download the archive from GitHub releases"""
     print(f"Downloading archive from {url}...")
     response = requests.get(url, stream=True)
     response.raise_for_status()
@@ -59,13 +58,13 @@ def download_archive(url, dest_dir):
     return zip_path
 
 
-def clone_source_repo(repo_url, dest_dir, branch):
-    """Clone the source repository at a specific branch"""
-    clone_cmd = f"git clone {repo_url} --branch {branch} source_repo"
+def clone_production_repo(repo_url, dest_dir, branch):
+    """Clone the production repository at a specific branch"""
+    clone_cmd = f"git clone {repo_url} --branch {branch} production_repo"
     
-    print(f"Cloning source repo {repo_url} (branch: {branch})...")
+    print(f"Cloning production repo {repo_url} (branch: {branch})...")
     run_command(clone_cmd, cwd=dest_dir)
-    return dest_dir / "source_repo"
+    return dest_dir / "production_repo"
 
 
 def extract_configs(zip_path, extract_dir):
@@ -108,53 +107,53 @@ def extract_configs(zip_path, extract_dir):
     return configs_path
 
 
-def clone_comparison_repo(repo_url, dest_dir, branch=None):
-    """Clone the comparison repository"""
-    clone_cmd = f"git clone {repo_url} comparison_repo"
+def clone_example_repo(repo_url, dest_dir, branch=None):
+    """Clone the example repository"""
+    clone_cmd = f"git clone {repo_url} example_repo"
     if branch:
         clone_cmd += f" --branch {branch}"
-    
-    print(f"Cloning comparison repo {repo_url}" + (f" (branch: {branch})" if branch else " (default branch)") + "...")
+
+    print(f"Cloning example repo {repo_url}" + (f" (branch: {branch})" if branch else " (default branch)") + "...")
     run_command(clone_cmd, cwd=dest_dir)
-    return dest_dir / "comparison_repo"
+    return dest_dir / "example_repo"
 
 
-def perform_diff(source_dir, target_repo_dir, summary_only=True, subdir=None):
+def perform_diff(production_dir, example_dir, summary_only=True, subdir=None):
     """Perform git diff between the two directories"""
     print("\n" + "="*80)
     print("PERFORMING DIFF")
     print("="*80 + "\n")
     
-    # Copy source configs to target repo for comparison
-    # Find a suitable subdirectory in target repo to compare against
-    target_configs = target_repo_dir / "configs"
-    
-    if not target_configs.exists():
-        print(f"Warning: {target_configs} does not exist in comparison repo")
+    # Copy production configs to example repo for comparison
+    # Find a suitable subdirectory in example repo to compare against
+    example_configs = example_dir / "configs"
+
+    if not example_configs.exists():
+        print(f"Warning: {example_configs} does not exist in example repo")
         print("Available directories:")
-        for item in target_repo_dir.iterdir():
+        for item in example_dir.iterdir():
             if item.is_dir():
                 print(f"  {item.name}")
         return
     
     # If subdirectory specified, navigate to it
     if subdir:
-        source_dir = source_dir / subdir
-        target_configs = target_configs / subdir
-        
-        if not source_dir.exists():
-            print(f"Error: Subdirectory '{subdir}' not found in source configs at {source_dir}")
-            print(f"Available subdirectories in source:")
-            parent = source_dir.parent
+        production_dir = production_dir / subdir
+        example_configs = example_configs / subdir
+
+        if not production_dir.exists():
+            print(f"Error: Subdirectory '{subdir}' not found in production configs at {production_dir}")
+            print(f"Available subdirectories in production:")
+            parent = production_dir.parent
             for item in parent.iterdir():
                 if item.is_dir():
                     print(f"  {item.name}")
             return
-        
-        if not target_configs.exists():
-            print(f"Error: Subdirectory '{subdir}' not found in target configs at {target_configs}")
-            print(f"Available subdirectories in target:")
-            parent = target_configs.parent
+
+        if not example_configs.exists():
+            print(f"Error: Subdirectory '{subdir}' not found in example configs at {example_configs}")
+            print(f"Available subdirectories in example:")
+            parent = example_configs.parent
             for item in parent.iterdir():
                 if item.is_dir():
                     print(f"  {item.name}")
@@ -162,8 +161,8 @@ def perform_diff(source_dir, target_repo_dir, summary_only=True, subdir=None):
     
     # Use git diff to compare
     print(f"Comparing:")
-    print(f"  Source: {source_dir}")
-    print(f"  Target: {target_configs}")
+    print(f"  Production: {production_dir}")
+    print(f"  Example: {example_configs}")
     print("\n" + "-"*80 + "\n")
     
     # Perform diff using git directly on both directories
@@ -171,16 +170,16 @@ def perform_diff(source_dir, target_repo_dir, summary_only=True, subdir=None):
         if summary_only:
             # Show only file names and status
             result = subprocess.run(
-                ['git', 'diff', '--no-index', '--name-status', str(target_configs), str(source_dir)],
-                cwd=target_repo_dir,
+                ['git', 'diff', '--no-index', '--name-status', str(example_configs), str(production_dir)],
+                cwd=example_dir,
                 capture_output=True,
                 text=True
             )
         else:
             # Show full diff
             result = subprocess.run(
-                ['git', 'diff', '--no-index', str(target_configs), str(source_dir)],
-                cwd=target_repo_dir,
+                ['git', 'diff', '--no-index', str(example_configs), str(production_dir)],
+                cwd=example_dir,
                 capture_output=True,
                 text=True
             )
@@ -242,10 +241,10 @@ def main():
     # Configuration
     REPO_OWNER = "SANDAG"
     REPO_NAME = "ABM"
-    SOURCE_REPO_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}.git"
-    COMPARISON_REPO = "https://github.com/ActivitySim/sandag-abm3-example.git"
+    PRODUCTION_REPO_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}.git"
+    EXAMPLE_REPO_URL = "https://github.com/ActivitySim/sandag-abm3-example.git"
     
-    # Determine source: release or branch
+    # Determine production: release or branch
     # Check if it's a release tag (starts with 'v') or a branch name
     if args.production:
         source_ref = args.production
@@ -279,22 +278,21 @@ def main():
                 # Step 2: Extract configs
                 configs_dir = extract_configs(zip_path, temp_path)
             else:
-                # Step 1: Clone source repo at specific branch
-                source_repo = clone_source_repo(SOURCE_REPO_URL, temp_path, source_ref)
-                
+                # Step 1: Clone production repo at specific branch
+                production_repo = clone_production_repo(PRODUCTION_REPO_URL, temp_path, source_ref)
+
                 # Step 2: Find configs directory
-                configs_dir = source_repo / "src" / "asim" / "configs"
+                configs_dir = production_repo / "src" / "asim" / "configs"
                 if not configs_dir.exists():
                     print(f"Error: Could not find configs at {configs_dir}")
                     sys.exit(1)
                 print(f"Using configs from {configs_dir}")
-            
-            # Step 3: Clone comparison repo
-            comparison_repo = clone_comparison_repo(COMPARISON_REPO, temp_path, args.example)
-            
+
+            # Step 3: Clone example repo
+            example_repo = clone_example_repo(EXAMPLE_REPO_URL, temp_path, args.example)
             # Step 4: Perform diff
-            perform_diff(configs_dir, comparison_repo, summary_only=not args.full, subdir=args.subdir)
-            
+            perform_diff(configs_dir, example_repo, summary_only=not args.full, subdir=args.subdir)
+
             print("\n" + "="*80)
             print("DIFF COMPLETE")
             print("="*80)
