@@ -10,12 +10,15 @@ resolution-markers = [
 exclude-newer = "2025-11-01T00:00:00Z"
 
 [manifest]
-requirements = [{ name = "activitysim", git = "https://github.com/driftlesslabs/activitysim.git?rev=0a1b99a8ca299636e964bae65f154ceb1923ae14" }]
+requirements = [
+    { name = "activitysim", specifier = ">=1.5,<2.0" },
+    { name = "sharrow", specifier = ">=2.15" },
+]
 
 [[package]]
 name = "activitysim"
-version = "1.5.1.dev13+g0a1b99a8c"
-source = { git = "https://github.com/driftlesslabs/activitysim.git?rev=0a1b99a8ca299636e964bae65f154ceb1923ae14#0a1b99a8ca299636e964bae65f154ceb1923ae14" }
+version = "1.5.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cytoolz" },
     { name = "multimethod" },
@@ -38,6 +41,10 @@ dependencies = [
     { name = "tables", version = "3.10.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "tables", version = "3.10.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "xarray" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/61/07/6ea3c22e6f5013e4e1f255fe7ca0e283e8d8ab4cdec512ac66875a9b4474/activitysim-1.5.0.tar.gz", hash = "sha256:8458e6c97b0c2d8d93324da2811ace34cc2904cf36b8aab74590d9f541e3cbe3", size = 94573193, upload-time = "2025-10-01T23:52:50.195Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/34/91/74e7ba6b5ec6d6229d2d13c7a22ca09863cfcd8fe70a09b7f0c106102ab3/activitysim-1.5.0-py3-none-any.whl", hash = "sha256:9511342f6f3ce40acd15281865cbd0a954c8b2f690f0187d0853dcd7fbeac8ae", size = 91977190, upload-time = "2025-10-01T23:52:45.368Z" },
 ]
 
 [[package]]

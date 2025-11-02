@@ -3,7 +3,8 @@
 # /// script
 # requires-python = ">=3.10,<3.12"
 # dependencies = [
-#   "activitysim @ git+https://github.com/driftlesslabs/activitysim.git@0a1b99a8ca299636e964bae65f154ceb1923ae14#egg=activitysim",
+#   "activitysim >=1.5,<2.0",
+#   "sharrow >=2.15",
 # ]
 # [tool.uv]
 # exclude-newer = "2025-11-01T00:00:00Z"
@@ -14,9 +15,6 @@ Run the sandag-abm3 example model with sharrow enabled, on the small test sample
 
 The metadata in the header above allows this script to be run with `uv` without
 needing to set up a separate virtual environment or install dependencies manually.
-
-TODO: When the needed features are available in a released version of ActivitySim,
-      update the dependency to point to that version instead of a git commit.
 """
 
 from pathlib import Path
