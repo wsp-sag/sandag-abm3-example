@@ -4,7 +4,6 @@
 # requires-python = ">=3.10,<3.12"
 # dependencies = [
 #   "activitysim >=1.5,<2.0",
-#   "sharrow >=2.15",
 #   "wring >=0.0.6",
 # ]
 # [tool.uv]
@@ -12,7 +11,7 @@
 # ///
 
 """
-Run the sandag-abm3 example model with sharrow enabled, on the full-scale sample.
+Run the sandag-abm3 example model with sharrow disabled, on the full-scale sample.
 
 The metadata in the header above allows this script to be run with `uv` without
 needing to set up a separate virtual environment or install dependencies manually.
@@ -50,8 +49,8 @@ def main():
         households_sample_size=100_000,
         chunk_size=0,
         use_shadow_pricing=True,
-        sharrow="require",
-        recode_pipeline_columns=True,
+        sharrow=False,
+        recode_pipeline_columns=False,
         memory_profile=False,
     )
 
