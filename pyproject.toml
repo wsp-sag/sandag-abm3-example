@@ -15,7 +15,7 @@ dependencies = [
     "psutil>=4.1",
     "pydantic>=2.6",
     "setuptools>=80.9.0,<81",
-    "sharrow>=2.14.0",
+    "sharrow>=2.15.0",
     "tables>=3.9",
 ]
 
