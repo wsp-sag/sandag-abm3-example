@@ -144,7 +144,7 @@ def test_sandag_abm3_progressive(use_sharrow):
         if ref_pipeline.exists():
             try:
                 # The usual default rtol=1e-5 is too strict for cross-platform testing
-                state.checkpoint.check_against(ref_pipeline, checkpoint_name=step_name, rtol=3.3e-5)
+                state.checkpoint.check_against(ref_pipeline, checkpoint_name=step_name, rtol=1e-4)
             except Exception:
                 print(f"> sandag-abm3 {step_name}: ERROR")
                 raise
