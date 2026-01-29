@@ -24,6 +24,23 @@ each part is a tar.zst archive. The archive is expected to be extracted into the
 `data-full` directory.
 """
 
+# Some tests by SANDAG are reporting crashes that seem to happen after an
+# OpenBLAS warning that the precompiled NUM_THREADS was exceeded.
+# see: https://github.com/ActivitySim/sandag-abm3-example/pull/39#issuecomment-3603510160
+#
+# The following environment variables limit the number of threads used by
+# various numerical libraries to 1, which should hopefully prevent these problems.
+# This may slow down the model run for single-process runs, but should improve
+# stability and not seriously impact multiprocessing runs.
+
+import os
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["NUMBA_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+
 import sys
 from pathlib import Path
 from activitysim.core import workflow
