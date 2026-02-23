@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+import shutil
 
 import pandas as pd
 import pandas.testing as pdt
@@ -25,6 +26,18 @@ def _test_path(dirname) -> Path:
 def regress(out_dir: Path, regress_dir: Path = None, filename="final_trips.csv"):
     if regress_dir is None:
         regress_dir = _test_path("regress")
+
+    # check that the regression target file exists,
+    # if not, we will write one as the new regression target
+    if not regress_dir.is_dir():
+        print(f"Regression target directory {regress_dir} does not exist, creating it")
+        regress_dir.mkdir(parents=True, exist_ok=True)
+    if not regress_dir.joinpath(filename).is_file():
+        print(f"Regression target file {regress_dir.joinpath(filename)} does not exist, "
+              f"writing new regression target")
+        shutil.copy(out_dir.joinpath(filename), regress_dir.joinpath(filename))
+        return
+
     regress_df = pd.read_csv(regress_dir.joinpath(filename))
     final_df = pd.read_csv(out_dir / filename)
 
