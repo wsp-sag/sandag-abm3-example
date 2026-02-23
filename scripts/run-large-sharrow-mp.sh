@@ -10,7 +10,7 @@ cd "$(dirname "$0")/.."
 OUTPUT_DIR="output-$(basename "$0" .sh)"
 
 # run activitysim with multiprocessing settings
-uv run --project .. activitysim run \
+ASIM_LOG_ENVIRON=true uv run --project ./.. activitysim run \
   -c configs/common \
   -c configs/resident \
   -d data-full \
