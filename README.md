@@ -26,14 +26,17 @@ Basic exmaple - diff resident configs:
 uv run python diff_production_configs.py -d resident
 ```
 
-Specify release of the production model, branch of the example model, and the subdirectory:
+Specify release or branch of the production model with `-p`, branch of the example model with `-e`, and the subdirectory with `-d`:
 ```
-# Specific release of production, branch of example, and subdirectory
-uv run python diff_production_configs.py -r v15.3.1 -b main -d common
+# Diff specific release of production, branch of example, and subdirectory
+uv run python diff_production_configs.py -p v15.3.1 -e main -d common
+
+# Diff specific branch of production, branch of example, and subdirectory
+uv run python diff_production_configs.py -p main -e sharrow-test -d common
 ```
 
 Show full diff output, not just file names:
 ```
 # with full output
-uv run python diff_production_configs.py -r v15.3.1 -b main -d common --full
+uv run python diff_production_configs.py -p v15.3.1 -e main -d common --full
 ```
