@@ -55,6 +55,7 @@ input_table_list:
       - num_workers
       - bldgsz
       - unittype
+      - poverty
   - tablename: persons
     filename: persons.csv
     index_col: person_id
@@ -146,13 +147,6 @@ output_tables:
         home_zone_id: land_use.zone_id
         TAZ: land_use_taz.TAZ
     - disaggregate_accessibility
-
-distributed_time_factor_work_mean: 1.0
-distributed_time_factor_work_stddev: 0.7
-distributed_time_factor_nonwork_mean: 1.0
-distributed_time_factor_nonwork_stddev: 0.6
-distributed_time_factor_min: 0.1
-distributed_time_factor_max: 10
 
 models:
   ### mp_init_proto_pop (single process)
