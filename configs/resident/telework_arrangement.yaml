@@ -1,0 +1,10 @@
+SPEC: telework_arrangement.csv
+COEFFICIENTS: telework_arrangement_coeffs.csv
+
+LOGIT_TYPE: MNL
+
+HAS_IN_HOME_WORK_ACTIVITY_ALT: 0
+
+annotate_persons:
+  SPEC: annotate_persons_telework_arrangement
+  DF: persons
