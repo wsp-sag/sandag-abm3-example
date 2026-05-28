@@ -1,0 +1,8 @@
+coefficient_name,value,constrain
+coef_unavailable,-999,F
+coef_acs_0_2h,-0.2,F
+coef_acs_2_4h,-0.1,F
+coef_acs_8_plus_h,-0.4,F
+coef_parttime_2_4h,-0.3,F
+coef_parttime_4_8h,-0.3,F
+coef_parttime_8_plus_h,-0.4,F

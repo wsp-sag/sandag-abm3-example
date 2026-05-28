@@ -1,0 +1,3 @@
+Label,Description,Expression,0_2_hours,2_4_hours,4_8_hours,8_plus_hours
+util_asc,alternative specific constant,1,coef_acs_0_2h,coef_acs_2_4h,,coef_acs_8_plus_h
+util_part_time,part-time worker,@df.ptype==PTYPE_PART,,coef_parttime_2_4h,coef_parttime_4_8h,coef_parttime_8_plus_h
