@@ -7,4 +7,4 @@ util_hybrid,hybrid worker,"(telework_arrangement==""hybrid working"")",,,coef_hy
 util_income_100_150,income 100-150k,(income_in_thousands>=100)&(income_in_thousands<150),coef_income_100_150_3_7,coef_income_100_150_3_7,,
 util_income_150_plus,income 150k+,(income_in_thousands>=150),coef_income_150_plus_3_5,coef_income_150_plus_5_7,,
 util_workplace_mc_logsum,workplace mode choice logsum,"@np.where(df.workplace_zone_id > -1, df.workplace_modechoice_logsum, 0)",coef_workplace_mc_logsum_3_7,coef_workplace_mc_logsum_3_7,,
-util_dummy_missing_workplace,util_dummy_missing_workplace,"@np.where((df.workplace_zone_id<=-1)&(~df.work_from_home), 1, 0)",coef_dummy_missing_workplace_3_5,coef_dummy_missing_workplace_5_7,,
+#util_dummy_missing_workplace,util_dummy_missing_workplace,"@np.where((df.workplace_zone_id<=-1)&(~df.work_from_home), 1, 0)",coef_dummy_missing_workplace_3_5,coef_dummy_missing_workplace_5_7,,
