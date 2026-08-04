@@ -2,5 +2,5 @@ Description,Target,Expression
 #,, annotate persons table after telework arrangement model has run
 Legible label of telework arrangement on the simulation day,telework_arrangement,'not working'
 Teleworking on the simulation day,telework_arrangement,"np.where((persons.get('cdap_activity')!=CDAP_ACTIVITY_MANDATORY)&(persons.get('has_in_home_work_activity')), 'teleworking', telework_arrangement)"
-Commuting on the simulation day,telework_arrangement,"np.where((persons.get('cdap_activity')==CDAP_ACTIVITY_MANDATORY)&(~persons.get('has_in_home_work_activity')), 'commuting', telework_arrangement)"
+Commuting on the simulation day,telework_arrangement,"np.where((persons.get('cdap_activity')==CDAP_ACTIVITY_MANDATORY)&(~persons.get('has_in_home_work_activity'))&(persons.get('is_worker')), 'commuting', telework_arrangement)"
 Hybrid working on the simulation day,telework_arrangement,"np.where((persons.get('cdap_activity')==CDAP_ACTIVITY_MANDATORY)&(persons.get('has_in_home_work_activity')), 'hybrid working', telework_arrangement)"
