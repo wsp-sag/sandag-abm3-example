@@ -15,7 +15,8 @@ ALT_DURATION_COLUMN: duration_hours
 
 # Probabilistic configuration.
 PROBS_SPEC: telework_duration_probs.csv
-PROBS_JOIN_COLS: null
+PROBS_JOIN_COLS: 
+  - ptype
 
 # MNL configuration (used when CHOICE_MODEL: MNL).
 SPEC: telework_duration.csv
